@@ -44,9 +44,10 @@ mt <- "m <- M/N" #ratio of mosquito to human
 xt <- "x <- (state_sum[3]+state_sum[6]+state_sum[7])/N" #3,6,7 -> I_S,I_UA,I_DA
 zt <- "z <- I_M/M"
 lam_Mt <- "lam_M <- a*c_*x"
-lam_Ht <- "param[[3]][[3]] <- m*a*b*z"
+lam_Ht <- "lam_H <-  rate2prob(m*a*b*z)"
+lam_Ht_dyanmic <- "lam_H <- param[[1]][[3]] <- rate2prob(m*a*b*z)"
 
-transient_para <- c(state_sumt,Nt,Mt,mt,xt,zt,lam_Mt,lam_Ht)
+transient_para <- c(state_sumt,Nt,Mt,mt,xt,zt,lam_Mt)
 
 #transient ODE
 S_Mt <- "S_M <- S_M + M*beta_ - S_M*kappa_SM - S_M*lam_M"
@@ -72,16 +73,27 @@ c_ = .02 #.03 #probability a mosquito becomes infected after biting an infected 
 timesteps <- 10000
 #transients
 
+#birth and death removed
+# list(1,8,pmu),
+# list(8,1,pmu),
+eval(parse(text = c(transient_para,lam_Ht)))
+#lam_H <- 0 #a trick to initialize lam_H which is required by the followig list
+#remember that lam_H is already calculated as a probability
 param <- list(
+  list(1, 2, NA),
+  list(2, 3, rate2prob(f)),
+  list(3, c(4,7), c(rep*rate2prob(gamma),(1-rep)*rate2prob(gamma))),
+  list(4, 5,rate2prob(sigma)),
+  list(5, c(1,3,6,7), c(rate2prob(omega_0),lam_H*xi1,lam_H*(1-xi2)*(1-xi1),lam_H*xi2*(1-xi1))),
+  list(6, c(3,5,7), c(lam_H*xi1,rate2prob(omega_IUA),lam_H*(1-xi1))),
+  list(7, c(3,6), c(lam_H*xi1,rate2prob(omega_IDA))),
   list(1,8,pmu),
-  list(8,1,pmu),
-  list(1,2,NA),
-  list(2,3,rate2prob(f)),
-  list(3,c(4,7),c(rep*rate2prob(gamma),(1-rep)*rate2prob(gamma))),
-  list(4,5,rate2prob(sigma))
+  list(8,1,pmu)
 )
-eval(parse(text = transient_para))
-transient_all <- c(transient_para, transient_ode)
+
+eval(parse(text=lam_Ht_dyanmic))
+
+transient_all <- c(transient_para, lam_Ht_dyanmic, transient_ode)
 
 result <- run_state_trans(timesteps,param,transient=transient_all,pop)
 
