@@ -75,7 +75,10 @@ timesteps <- 10000
 param <- list(
   list(1,8,pmu),
   list(8,1,pmu),
-  list(1,2,NA)
+  list(1,2,NA),
+  list(2,3,rate2prob(f)),
+  list(3,c(4,7),c(rep*rate2prob(gamma),(1-rep)*rate2prob(gamma))),
+  list(4,5,rate2prob(sigma))
 )
 eval(parse(text = transient_para))
 transient_all <- c(transient_para, transient_ode)
@@ -84,3 +87,6 @@ result <- run_state_trans(timesteps,param,transient=transient_all,pop)
 
 
 tail(result) #summary results at the end of the timesteps
+plot(result[,1]+result[,5], ylim=c(0, N), type='l', col='blue')
+lines(result[,3], type='l', col='red')
+lines(result[,6]+result[,7], type='l', col='purple')
