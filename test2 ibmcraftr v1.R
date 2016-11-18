@@ -3,7 +3,7 @@
 
 library(ibmcraftr)
 
-rm(list = ls())
+rm(list = ls()) #####remove this when looping to run many times####
 #humans
 #init
 init.pop <- c(S=1000, E=0, I_S=1, R_T=0, S_I=0, I_UA=0, I_DA=0, D = 1000)
@@ -80,7 +80,7 @@ eval(parse(text = c(transient_para,lam_Ht)))
 #lam_H <- 0 #a trick to initialize lam_H which is required by the followig list
 #remember that lam_H is already calculated as a probability
 param <- list(
-  list(1, 2, NA),
+  list(1, 2, lam_H),
   list(2, 3, rate2prob(f)),
   list(3, c(4,7), c(rep*rate2prob(gamma),(1-rep)*rate2prob(gamma))),
   list(4, 5,rate2prob(sigma)),
@@ -91,7 +91,7 @@ param <- list(
   list(8,1,pmu)
 )
 
-eval(parse(text=lam_Ht_dyanmic))
+#eval(parse(text=lam_Ht_dyanmic))
 
 transient_all <- c(transient_para, lam_Ht_dyanmic, transient_ode)
 
