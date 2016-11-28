@@ -68,7 +68,7 @@ seast <- "seas <- amp*cos(2*pi*(timecounter-phi)/365)+magnitude"
 lam_Mt <- "lam_M <- a*c_*x*seas"
 timecountert <- "timecounter <- timecounter + 1"
 lam_Ht <- "lam_H <-  rate2prob(m*a*b*z)"
-lam_Ht_dyanmic <- "lam_H <- param[[1]][[3]] <- rate2prob(m*a*b*z)"
+lam_Ht_dyanmic <- "lam_H <- param[[1]][[3]][[1]] <- rate2prob(m*a*b*z)"
 
 transient_para <- c(state_sumt,Nt,Mt,mt,xt,zt,seast,lam_Mt,timecountert)
 
