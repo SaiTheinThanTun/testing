@@ -2,7 +2,9 @@
 #parameters and initial values for ibmcraftr
 library(ibmcraftr)
 #library(profvis)
-
+#debug
+# anything <- list(m=NA,a=NA,b=NA,z=NA,mtpl=NA)
+# anything2 <- list(x=NA, acx=NA)
 # system.time({
   no_sims <- 100
   lci <- .05
@@ -20,7 +22,7 @@ library(ibmcraftr)
   # for(i in 1:no_sims){
     #humans
     #init
-    init.pop <- c(S=1000, E=0, I_S=1, R_T=0, S_I=0, I_UA=0, I_DA=0, D = 1000)
+    init.pop <- c(S=300, E=0, I_S=1, R_T=0, S_I=0, I_UA=0, I_DA=0, D = 300) 
     pop <- syn_pop(init.pop)
     #parameters
     
@@ -68,8 +70,10 @@ library(ibmcraftr)
     lam_Mt <- "lam_M <- a*c_*x*seas"
     timecountert <- "timecounter <- timecounter + 1"
     lam_Ht <- "lam_H <-  rate2prob(m*a*b*z)"
-    lam_Ht_dyanmic <- "lam_H <- param[[1]][[3]][[1]] <- rate2prob(m*a*b*z)"
-    
+    lam_Ht_dyanmic <- "lam_H <- param[[1]][[3]][[1]] <- rate2prob(m*a*b*z)" #debug
+    # debug_ <- c("anything[[1]][[timecounter]] <<- m","anything[[2]][[timecounter]] <<- a", "anything[[3]][[timecounter]] <<- b", "anything[[4]][[timecounter]] <<- z", "anything[[5]][[timecounter]] <<- m*a*b*z") # <<- m*a*b*z"
+    # debug2_ <- c("anything2[[1]][[timecounter]] <<- x", "anything2[[2]][[timecounter]] <<- a*c_*x*seas")
+
     transient_para <- c(state_sumt,Nt,Mt,mt,xt,zt,seast,lam_Mt,timecountert)
     
     #transient ODE
@@ -131,7 +135,7 @@ library(deSolve)
 library(maemod)
 maxtime <- 10000
 
-out <- maemodrun("D:\\Dropbox\\IBM project_Sai\\ODE\\SIRSI.txt", timegrid = seq(0,maxtime,1)) #scenario2
+out <- maemodrun("D:\\Dropbox\\IBM project_Sai\\ODE\\SIRSI_debug.txt", timegrid = seq(0,maxtime,1)) #scenario2
 
 
 #humans
