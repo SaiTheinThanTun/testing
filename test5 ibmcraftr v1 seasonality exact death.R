@@ -100,11 +100,11 @@ library(ibmcraftr)
     param <- list(
       list(1, c(2,8), c(lam_H,pmu)),
       list(2, c(3,8), c(rate2prob(f),pmu*mu_E)),
-      list(3, c(4,7,8), c(rep*rate2prob(gamma),(1-rep)*rate2prob(gamma)),pmu*mu_IS),
+      list(3, c(4,7,8), c(rep*rate2prob(gamma),(1-rep)*rate2prob(gamma),pmu*mu_IS)),
       list(4, c(5,8),c(rate2prob(sigma),pmu*mu_RT)),
-      list(5, c(1,3,6,7,8), c(rate2prob(omega_0),lam_H*xi1,lam_H*(1-xi2)*(1-xi1),lam_H*xi2*(1-xi1)),pmu*mu_SI),
-      list(6, c(3,5,7,8), c(lam_H*xi1,rate2prob(omega_IUA),lam_H*(1-xi1)),pmu*mu_IUA),
-      list(7, c(3,6,8), c(lam_H*xi1,rate2prob(omega_IDA)),pmu*mu_IDA),
+      list(5, c(1,3,6,7,8), c(rate2prob(omega_0),lam_H*xi1,lam_H*(1-xi2)*(1-xi1),lam_H*xi2*(1-xi1),pmu*mu_SI)),
+      list(6, c(3,5,7,8), c(lam_H*xi1,rate2prob(omega_IUA),lam_H*(1-xi1),pmu*mu_IUA)),
+      list(7, c(3,6,8), c(lam_H*xi1,rate2prob(omega_IDA),pmu*mu_IDA)),
       list(8,1,pmu)
     )
     
@@ -125,134 +125,134 @@ lines(result[,6]+result[,7], type='l', col='purple')
 ##############################
 
 #saving the dataset
-save(sims,file=paste("100iterations_",Sys.Date(),".RData",sep=""))
-
-#plotting
-
-tmp_avg <- rep(NA,no_sims)
-avg_sims <- matrix(NA,nrow(sims[[1]]),ncol(sims[[1]])) #initializing a blank dataset of summary table
-for(i in 1:ncol(sims[[1]])){ #outer loop for the columns
-  for(j in 1:nrow(sims[[1]])){ #inner loop for the rows
-    for(k in 1:no_sims){#innermost loop for no. of simulations(3rd dimension)
-      tmp_avg[k] <- sims[[k]][j,i]
-    }
-    avg_sims[j,i] <- mean(tmp_avg)
-  }
-}
-
-#lower CI (LCI)
-tmp_lci <- rep(NA,no_sims)
-lci_sims <- matrix(NA,nrow(sims[[1]]),ncol(sims[[1]])) #initializing a blank dataset of summary table
-for(i in 1:ncol(sims[[1]])){ #outer loop for the columns
-  for(j in 1:nrow(sims[[1]])){ #inner loop for the rows
-    for(k in 1:no_sims){#innermost loop for no. of simulations(3rd dimension)
-      tmp_lci[k] <- sims[[k]][j,i]
-    }
-    lci_sims[j,i] <- quantile(tmp_lci, probs= lci, na.rm=TRUE)
-  }
-}
-
-#high CI (HCI)
-tmp_hci <- rep(NA,no_sims)
-hci_sims <- matrix(NA,nrow(sims[[1]]),ncol(sims[[1]])) #initializing a blank dataset of summary table
-for(i in 1:ncol(sims[[1]])){ #outer loop for the columns
-  for(j in 1:nrow(sims[[1]])){ #inner loop for the rows
-    for(k in 1:no_sims){#innermost loop for no. of simulations(3rd dimension)
-      tmp_hci[k] <- sims[[k]][j,i]
-    }
-    hci_sims[j,i] <- quantile(tmp_hci, probs = hci, na.rm=TRUE)
-  }
-}
-
-colnames(hci_sims) <- colnames(lci_sims) <- colnames(avg_sims) <- c('S','E','I_S', 'R_T','S_I','I_UA','I_DA','D') #column names for the summary table
-ts <- 1:length(avg_sims[,1])
-avg_sims <- cbind(avg_sims,ts)
-hci_sims <- cbind(hci_sims,ts)
-lci_sims <- cbind(lci_sims,ts)
-
-#saving averages
-save(avg_sims,hci_sims,lci_sims, file=paste("100it_avg_hci_lci_",Sys.Date(),".RData",sep=""))
-
-
-
-# ###loading Data####
-# load("D:\\Dropbox\\IBM project_Sai\\testingRData\\100it_avg_hci_lci.RData")
-# load("D:\\Dropbox\\IBM project_Sai\\testingRData\\100iterations.RData")
-
-####plot S vs I ####
-par(mar=c(5,4,4,4))
-plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", axes=FALSE, xlab="", ylab="", main=paste(no_sims," iterations: S vs I"))# lambda",lam_h,"and CI",lci,'-',hci))
-polygon(c(avg_sims[,9], rev(avg_sims[,9])),c(hci_sims[,1]+hci_sims[,5], rev(lci_sims[,1]+lci_sims[,5])),col=rgb(0,0,100,50,maxColorValue=255), border=NA)
-axis(2, ylim=c(0,17),col="blue") 
-mtext("Susceptible humans",side=2,line=2.5) 
-
-box()
-par(new=TRUE)
-plot(avg_sims[,9],avg_sims[,3], type="l", col="red", axes=FALSE, xlab="", ylab="")
-polygon(c(avg_sims[,9], rev(avg_sims[,9])), c(hci_sims[,3], rev(lci_sims[,3])),col=rgb(100,0,0,50,maxColorValue = 255), border=NA)
-axis(4, ylim=c(0,17),col="red") 
-mtext("Infected humans",side=4, line=2.5)
-
-axis(1,pretty(range(avg_sims[,9]),10))
-mtext("Time (days)",side=1,col="black",line=2.5)
-
-legend("top",legend=c("Susceptibles","Infected"),
-       text.col=c("blue","red"),pch= "__", col=c("blue","red"))
-
-
-####plot S vs asympt ####
-par(mar=c(5,4,4,4))
-plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", axes=FALSE, xlab="", ylab="", main=paste(no_sims," iterations: S vs Asymptomatics"))# lambda",lam_h,"and CI",lci,'-',hci))
-polygon(c(avg_sims[,9], rev(avg_sims[,9])),c(hci_sims[,1]+hci_sims[,5], rev(lci_sims[,1]+lci_sims[,5])),col=rgb(0,0,100,50,maxColorValue=255), border=NA)
-axis(2, ylim=c(0,17),col="blue") 
-mtext("Susceptible humans",side=2,line=2.5) 
-box()
-par(new=TRUE)
-plot(avg_sims[,9],avg_sims[,6]+avg_sims[,7], type="l", col="purple", axes=FALSE, xlab="", ylab="")
-polygon(c(avg_sims[,9], rev(avg_sims[,9])), c(hci_sims[,6]+hci_sims[,7], rev(lci_sims[,6]+lci_sims[,7])),col=rgb(100,0,0,50,maxColorValue = 255), border=NA)
-axis(4, ylim=c(0,17),col="purple") 
-mtext("Asymptomatic Infected humans",side=4, line=2.5)
-
-axis(1,pretty(range(avg_sims[,9]),10))
-mtext("Time (days)",side=1,col="black",line=2.5)
-
-legend("top",legend=c("Susceptibles","Asymptomatic Infected"),
-       text.col=c("blue","purple"),pch= "__", col=c("blue","purple"))
-
-
-#combination plot
-plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", ylim=c(0,max(avg_sims[,1])), xlab="Days", ylab="No. individuals", main=paste(no_sims," iterations"))# lambda",lam_h,"and CI",lci,'-',hci))
-polygon(c(avg_sims[,9], rev(avg_sims[,9])),c(hci_sims[,1]+hci_sims[,5], rev(lci_sims[,1]+lci_sims[,5])),col=rgb(0,0,100,50,maxColorValue=255), border=NA)
-
-
-lines(avg_sims[,9],avg_sims[,3], type="l", col="red")
-polygon(c(avg_sims[,9], rev(avg_sims[,9])), c(hci_sims[,3], rev(lci_sims[,3])),col=rgb(100,0,0,50,maxColorValue = 255), border=NA)
-
-
-lines(avg_sims[,9],avg_sims[,6]+avg_sims[,7], type="l", col="purple")
-polygon(c(avg_sims[,9], rev(avg_sims[,9])), c(hci_sims[,6]+hci_sims[,7], rev(lci_sims[,6]+lci_sims[,7])),col=rgb(50,0,0,50,maxColorValue = 255), border=NA)
-
-legend("top",legend=c("Susceptibles","Infected","Asymptomatic Infected"),
-       text.col=c("blue","red","purple"),pch= "__", col=c("blue", "red","purple"))
-
-#combination plot compared with ODE
-
+# save(sims,file=paste("100iterations_",Sys.Date(),".RData",sep=""))
+# 
+# #plotting
+# 
+# tmp_avg <- rep(NA,no_sims)
+# avg_sims <- matrix(NA,nrow(sims[[1]]),ncol(sims[[1]])) #initializing a blank dataset of summary table
+# for(i in 1:ncol(sims[[1]])){ #outer loop for the columns
+#   for(j in 1:nrow(sims[[1]])){ #inner loop for the rows
+#     for(k in 1:no_sims){#innermost loop for no. of simulations(3rd dimension)
+#       tmp_avg[k] <- sims[[k]][j,i]
+#     }
+#     avg_sims[j,i] <- mean(tmp_avg)
+#   }
+# }
+# 
+# #lower CI (LCI)
+# tmp_lci <- rep(NA,no_sims)
+# lci_sims <- matrix(NA,nrow(sims[[1]]),ncol(sims[[1]])) #initializing a blank dataset of summary table
+# for(i in 1:ncol(sims[[1]])){ #outer loop for the columns
+#   for(j in 1:nrow(sims[[1]])){ #inner loop for the rows
+#     for(k in 1:no_sims){#innermost loop for no. of simulations(3rd dimension)
+#       tmp_lci[k] <- sims[[k]][j,i]
+#     }
+#     lci_sims[j,i] <- quantile(tmp_lci, probs= lci, na.rm=TRUE)
+#   }
+# }
+# 
+# #high CI (HCI)
+# tmp_hci <- rep(NA,no_sims)
+# hci_sims <- matrix(NA,nrow(sims[[1]]),ncol(sims[[1]])) #initializing a blank dataset of summary table
+# for(i in 1:ncol(sims[[1]])){ #outer loop for the columns
+#   for(j in 1:nrow(sims[[1]])){ #inner loop for the rows
+#     for(k in 1:no_sims){#innermost loop for no. of simulations(3rd dimension)
+#       tmp_hci[k] <- sims[[k]][j,i]
+#     }
+#     hci_sims[j,i] <- quantile(tmp_hci, probs = hci, na.rm=TRUE)
+#   }
+# }
+# 
+# colnames(hci_sims) <- colnames(lci_sims) <- colnames(avg_sims) <- c('S','E','I_S', 'R_T','S_I','I_UA','I_DA','D') #column names for the summary table
+# ts <- 1:length(avg_sims[,1])
+# avg_sims <- cbind(avg_sims,ts)
+# hci_sims <- cbind(hci_sims,ts)
+# lci_sims <- cbind(lci_sims,ts)
+# 
+# #saving averages
+# save(avg_sims,hci_sims,lci_sims, file=paste("100it_avg_hci_lci_",Sys.Date(),".RData",sep=""))
+# 
+# 
+# 
+# # ###loading Data####
+# # load("D:\\Dropbox\\IBM project_Sai\\testingRData\\100it_avg_hci_lci.RData")
+# # load("D:\\Dropbox\\IBM project_Sai\\testingRData\\100iterations.RData")
+# 
+# ####plot S vs I ####
+# par(mar=c(5,4,4,4))
+# plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", axes=FALSE, xlab="", ylab="", main=paste(no_sims," iterations: S vs I"))# lambda",lam_h,"and CI",lci,'-',hci))
+# polygon(c(avg_sims[,9], rev(avg_sims[,9])),c(hci_sims[,1]+hci_sims[,5], rev(lci_sims[,1]+lci_sims[,5])),col=rgb(0,0,100,50,maxColorValue=255), border=NA)
+# axis(2, ylim=c(0,17),col="blue") 
+# mtext("Susceptible humans",side=2,line=2.5) 
+# 
+# box()
+# par(new=TRUE)
+# plot(avg_sims[,9],avg_sims[,3], type="l", col="red", axes=FALSE, xlab="", ylab="")
+# polygon(c(avg_sims[,9], rev(avg_sims[,9])), c(hci_sims[,3], rev(lci_sims[,3])),col=rgb(100,0,0,50,maxColorValue = 255), border=NA)
+# axis(4, ylim=c(0,17),col="red") 
+# mtext("Infected humans",side=4, line=2.5)
+# 
+# axis(1,pretty(range(avg_sims[,9]),10))
+# mtext("Time (days)",side=1,col="black",line=2.5)
+# 
+# legend("top",legend=c("Susceptibles","Infected"),
+#        text.col=c("blue","red"),pch= "__", col=c("blue","red"))
+# 
+# 
+# ####plot S vs asympt ####
+# par(mar=c(5,4,4,4))
+# plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", axes=FALSE, xlab="", ylab="", main=paste(no_sims," iterations: S vs Asymptomatics"))# lambda",lam_h,"and CI",lci,'-',hci))
+# polygon(c(avg_sims[,9], rev(avg_sims[,9])),c(hci_sims[,1]+hci_sims[,5], rev(lci_sims[,1]+lci_sims[,5])),col=rgb(0,0,100,50,maxColorValue=255), border=NA)
+# axis(2, ylim=c(0,17),col="blue") 
+# mtext("Susceptible humans",side=2,line=2.5) 
+# box()
+# par(new=TRUE)
+# plot(avg_sims[,9],avg_sims[,6]+avg_sims[,7], type="l", col="purple", axes=FALSE, xlab="", ylab="")
+# polygon(c(avg_sims[,9], rev(avg_sims[,9])), c(hci_sims[,6]+hci_sims[,7], rev(lci_sims[,6]+lci_sims[,7])),col=rgb(100,0,0,50,maxColorValue = 255), border=NA)
+# axis(4, ylim=c(0,17),col="purple") 
+# mtext("Asymptomatic Infected humans",side=4, line=2.5)
+# 
+# axis(1,pretty(range(avg_sims[,9]),10))
+# mtext("Time (days)",side=1,col="black",line=2.5)
+# 
+# legend("top",legend=c("Susceptibles","Asymptomatic Infected"),
+#        text.col=c("blue","purple"),pch= "__", col=c("blue","purple"))
+# 
+# 
+# #combination plot
+# plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", ylim=c(0,max(avg_sims[,1])), xlab="Days", ylab="No. individuals", main=paste(no_sims," iterations"))# lambda",lam_h,"and CI",lci,'-',hci))
+# polygon(c(avg_sims[,9], rev(avg_sims[,9])),c(hci_sims[,1]+hci_sims[,5], rev(lci_sims[,1]+lci_sims[,5])),col=rgb(0,0,100,50,maxColorValue=255), border=NA)
+# 
+# 
+# lines(avg_sims[,9],avg_sims[,3], type="l", col="red")
+# polygon(c(avg_sims[,9], rev(avg_sims[,9])), c(hci_sims[,3], rev(lci_sims[,3])),col=rgb(100,0,0,50,maxColorValue = 255), border=NA)
+# 
+# 
+# lines(avg_sims[,9],avg_sims[,6]+avg_sims[,7], type="l", col="purple")
+# polygon(c(avg_sims[,9], rev(avg_sims[,9])), c(hci_sims[,6]+hci_sims[,7], rev(lci_sims[,6]+lci_sims[,7])),col=rgb(50,0,0,50,maxColorValue = 255), border=NA)
+# 
+# legend("top",legend=c("Susceptibles","Infected","Asymptomatic Infected"),
+#        text.col=c("blue","red","purple"),pch= "__", col=c("blue", "red","purple"))
+# 
+# #combination plot compared with ODE
+# 
 library(deSolve)
 library(maemod)
 maxtime <- 10000
 
 out <- maemodrun("D:\\Dropbox\\IBM project_Sai\\ODE\\SIRSI.txt", timegrid = seq(0,maxtime,1)) #scenario2
 
-plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", ylim=c(0,max(avg_sims[,1])), xlab="Days", ylab="No. individuals", main=paste(no_sims," iterations"))# lambda",lam_h,"and CI",lci,'-',hci))
-polygon(c(avg_sims[,9], rev(avg_sims[,9])),c(hci_sims[,1]+hci_sims[,5], rev(lci_sims[,1]+lci_sims[,5])),col=rgb(0,0,100,50,maxColorValue=255), border=NA)
-
-
-lines(avg_sims[,9],avg_sims[,3], type="l", col="red")
-polygon(c(avg_sims[,9], rev(avg_sims[,9])), c(hci_sims[,3], rev(lci_sims[,3])),col=rgb(100,0,0,50,maxColorValue = 255), border=NA)
-
-
-lines(avg_sims[,9],avg_sims[,6]+avg_sims[,7], type="l", col="purple")
-polygon(c(avg_sims[,9], rev(avg_sims[,9])), c(hci_sims[,6]+hci_sims[,7], rev(lci_sims[,6]+lci_sims[,7])),col=rgb(50,0,0,50,maxColorValue = 255), border=NA)
+# plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", ylim=c(0,max(avg_sims[,1])), xlab="Days", ylab="No. individuals", main=paste(no_sims," iterations"))# lambda",lam_h,"and CI",lci,'-',hci))
+# polygon(c(avg_sims[,9], rev(avg_sims[,9])),c(hci_sims[,1]+hci_sims[,5], rev(lci_sims[,1]+lci_sims[,5])),col=rgb(0,0,100,50,maxColorValue=255), border=NA)
+# 
+# 
+# lines(avg_sims[,9],avg_sims[,3], type="l", col="red")
+# polygon(c(avg_sims[,9], rev(avg_sims[,9])), c(hci_sims[,3], rev(lci_sims[,3])),col=rgb(100,0,0,50,maxColorValue = 255), border=NA)
+# 
+# 
+# lines(avg_sims[,9],avg_sims[,6]+avg_sims[,7], type="l", col="purple")
+# polygon(c(avg_sims[,9], rev(avg_sims[,9])), c(hci_sims[,6]+hci_sims[,7], rev(lci_sims[,6]+lci_sims[,7])),col=rgb(50,0,0,50,maxColorValue = 255), border=NA)
 
 
 #humans

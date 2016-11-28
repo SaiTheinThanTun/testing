@@ -100,11 +100,11 @@ eval(parse(text = c(transient_para,lam_Ht)))
 param <- list(
   list(1, c(2,8), c(lam_H,pmu)),
   list(2, c(3,8), c(rate2prob(f),pmu*mu_E)),
-  list(3, c(4,7,8), c(rep*rate2prob(gamma),(1-rep)*rate2prob(gamma)),pmu*mu_IS),
+  list(3, c(4,7,8), c(rep*rate2prob(gamma),(1-rep)*rate2prob(gamma),pmu*mu_IS)),
   list(4, c(5,8),c(rate2prob(sigma),pmu*mu_RT)),
-  list(5, c(1,3,6,7,8), c(rate2prob(omega_0),lam_H*xi1,lam_H*(1-xi2)*(1-xi1),lam_H*xi2*(1-xi1)),pmu*mu_SI),
-  list(6, c(3,5,7,8), c(lam_H*xi1,rate2prob(omega_IUA),lam_H*(1-xi1)),pmu*mu_IUA),
-  list(7, c(3,6,8), c(lam_H*xi1,rate2prob(omega_IDA)),pmu*mu_IDA),
+  list(5, c(1,3,6,7,8), c(rate2prob(omega_0),lam_H*xi1,lam_H*(1-xi2)*(1-xi1),lam_H*xi2*(1-xi1),pmu*mu_SI)),
+  list(6, c(3,5,7,8), c(lam_H*xi1,rate2prob(omega_IUA),lam_H*(1-xi1),pmu*mu_IUA)),
+  list(7, c(3,6,8), c(lam_H*xi1,rate2prob(omega_IDA),pmu*mu_IDA)),
   list(8,1,pmu)
 )
 

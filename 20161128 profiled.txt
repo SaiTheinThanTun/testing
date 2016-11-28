@@ -7,3 +7,9 @@ test3 ibmcraftr v1 seasonality looped profiled.R
 test4 ibmcraftr v1 seasonality death looped profiled.R
    user  system elapsed 
 3623.83    0.14 3635.72
+
+test5 ibmcraftr v1 seasonality exactdeath looped profiled.R
+   user  system elapsed 
+6936.79    0.09 6938.29
+
+115 minutes 
