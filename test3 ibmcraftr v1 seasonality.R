@@ -46,6 +46,13 @@ hci <- .95
   omega_IDA = 1/100 # loss of detectability of parasites
   mu_IUA = 1 #same death rate as mu_S
   mu_IDA = 1 #same death rate as mu_S
+  timecounter = 0
+  
+  #seasonality
+  seas_switch <- 1 #logical switch for seasonality
+  amp <- .2
+  phi <- 0
+  magnitude <- 1
   
   #transients #this should be done outside of the function once
   state_sumt <- "state_sum <- colSums(pop)"
@@ -54,11 +61,13 @@ hci <- .95
   mt <- "m <- M/N" #ratio of mosquito to human
   xt <- "x <- (state_sum[3]+state_sum[6]+state_sum[7])/N" #3,6,7 -> I_S,I_UA,I_DA
   zt <- "z <- I_M/M"
-  lam_Mt <- "lam_M <- a*c_*x"
+  seast <- "seas <- amp*cos(2*pi*(timecounter-phi)/365)+magnitude"
+  lam_Mt <- "lam_M <- a*c_*x*seas"
+  timecountert <- "timecounter <- timecounter + 1"
   lam_Ht <- "lam_H <-  rate2prob(m*a*b*z)"
   lam_Ht_dyanmic <- "lam_H <- param[[1]][[3]] <- rate2prob(m*a*b*z)"
   
-  transient_para <- c(state_sumt,Nt,Mt,mt,xt,zt,lam_Mt)
+  transient_para <- c(state_sumt,Nt,Mt,mt,xt,zt,seast,lam_Mt,timecountert)
   
   #transient ODE
   S_Mt <- "S_M <- S_M + M*beta_ - S_M*kappa_SM - S_M*lam_M"

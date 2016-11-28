@@ -1,0 +1,5 @@
+test3 ibmcraftr v1 seasonality looped profiled.R
+   user  system elapsed 
+3318.22    0.09 3320.02 
+
+[1] 55.3
