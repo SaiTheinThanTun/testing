@@ -1,4 +1,4 @@
-#test4: test4 seasonality , add deaths in all compartments #looped profiled
+#test5: test5 seasonality , add exact deaths in all compartments, #looped profiled
 #parameters and initial values for ibmcraftr
 library(ibmcraftr)
 #library(profvis)
@@ -99,12 +99,12 @@ library(ibmcraftr)
     
     param <- list(
       list(1, c(2,8), c(lam_H,pmu)),
-      list(2, c(3,8), c(rate2prob(f),pmu)),
-      list(3, c(4,7,8), c(rep*rate2prob(gamma),(1-rep)*rate2prob(gamma)),pmu),
-      list(4, c(5,8),c(rate2prob(sigma),pmu)),
-      list(5, c(1,3,6,7,8), c(rate2prob(omega_0),lam_H*xi1,lam_H*(1-xi2)*(1-xi1),lam_H*xi2*(1-xi1)),pmu),
-      list(6, c(3,5,7,8), c(lam_H*xi1,rate2prob(omega_IUA),lam_H*(1-xi1)),pmu),
-      list(7, c(3,6,8), c(lam_H*xi1,rate2prob(omega_IDA)),pmu),
+      list(2, c(3,8), c(rate2prob(f),pmu*mu_E)),
+      list(3, c(4,7,8), c(rep*rate2prob(gamma),(1-rep)*rate2prob(gamma)),pmu*mu_IS),
+      list(4, c(5,8),c(rate2prob(sigma),pmu*mu_RT)),
+      list(5, c(1,3,6,7,8), c(rate2prob(omega_0),lam_H*xi1,lam_H*(1-xi2)*(1-xi1),lam_H*xi2*(1-xi1)),pmu*mu_SI),
+      list(6, c(3,5,7,8), c(lam_H*xi1,rate2prob(omega_IUA),lam_H*(1-xi1)),pmu*mu_IUA),
+      list(7, c(3,6,8), c(lam_H*xi1,rate2prob(omega_IDA)),pmu*mu_IDA),
       list(8,1,pmu)
     )
     
@@ -125,7 +125,7 @@ lines(result[,6]+result[,7], type='l', col='purple')
 ##############################
 
 #saving the dataset
-save(sims,file="100iterations.RData")
+save(sims,file=paste("100iterations_",Sys.Date(),".RData",sep=""))
 
 #plotting
 
@@ -171,17 +171,17 @@ hci_sims <- cbind(hci_sims,ts)
 lci_sims <- cbind(lci_sims,ts)
 
 #saving averages
-save(avg_sims,hci_sims,lci_sims, file="100it_avg_hci_lci.RData")
+save(avg_sims,hci_sims,lci_sims, file=paste("100it_avg_hci_lci_",Sys.Date(),".RData",sep=""))
 
 
 
-###loading Data####
-load("D:\\Dropbox\\IBM project_Sai\\testingRData\\100it_avg_hci_lci.RData")
-load("D:\\Dropbox\\IBM project_Sai\\testingRData\\100iterations.RData")
+# ###loading Data####
+# load("D:\\Dropbox\\IBM project_Sai\\testingRData\\100it_avg_hci_lci.RData")
+# load("D:\\Dropbox\\IBM project_Sai\\testingRData\\100iterations.RData")
 
 ####plot S vs I ####
 par(mar=c(5,4,4,4))
-plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", axes=FALSE, xlab="", ylab="", main=paste(no_sims," itirations: S vs I"))# lambda",lam_h,"and CI",lci,'-',hci))
+plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", axes=FALSE, xlab="", ylab="", main=paste(no_sims," iterations: S vs I"))# lambda",lam_h,"and CI",lci,'-',hci))
 polygon(c(avg_sims[,9], rev(avg_sims[,9])),c(hci_sims[,1]+hci_sims[,5], rev(lci_sims[,1]+lci_sims[,5])),col=rgb(0,0,100,50,maxColorValue=255), border=NA)
 axis(2, ylim=c(0,17),col="blue") 
 mtext("Susceptible humans",side=2,line=2.5) 
@@ -202,7 +202,7 @@ legend("top",legend=c("Susceptibles","Infected"),
 
 ####plot S vs asympt ####
 par(mar=c(5,4,4,4))
-plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", axes=FALSE, xlab="", ylab="", main=paste(no_sims," itirations: S vs Asymptomatics"))# lambda",lam_h,"and CI",lci,'-',hci))
+plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", axes=FALSE, xlab="", ylab="", main=paste(no_sims," iterations: S vs Asymptomatics"))# lambda",lam_h,"and CI",lci,'-',hci))
 polygon(c(avg_sims[,9], rev(avg_sims[,9])),c(hci_sims[,1]+hci_sims[,5], rev(lci_sims[,1]+lci_sims[,5])),col=rgb(0,0,100,50,maxColorValue=255), border=NA)
 axis(2, ylim=c(0,17),col="blue") 
 mtext("Susceptible humans",side=2,line=2.5) 
@@ -221,7 +221,7 @@ legend("top",legend=c("Susceptibles","Asymptomatic Infected"),
 
 
 #combination plot
-plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", ylim=c(0,max(avg_sims[,1])), xlab="Days", ylab="No. individuals", main=paste(no_sims," itirations"))# lambda",lam_h,"and CI",lci,'-',hci))
+plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", ylim=c(0,max(avg_sims[,1])), xlab="Days", ylab="No. individuals", main=paste(no_sims," iterations"))# lambda",lam_h,"and CI",lci,'-',hci))
 polygon(c(avg_sims[,9], rev(avg_sims[,9])),c(hci_sims[,1]+hci_sims[,5], rev(lci_sims[,1]+lci_sims[,5])),col=rgb(0,0,100,50,maxColorValue=255), border=NA)
 
 
@@ -243,10 +243,7 @@ maxtime <- 10000
 
 out <- maemodrun("D:\\Dropbox\\IBM project_Sai\\ODE\\SIRSI.txt", timegrid = seq(0,maxtime,1)) #scenario2
 
-head(out)
-tail(out)
-
-plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", ylim=c(0,max(avg_sims[,1])), xlab="Days", ylab="No. individuals", main=paste(no_sims," itirations"))# lambda",lam_h,"and CI",lci,'-',hci))
+plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", ylim=c(0,max(avg_sims[,1])), xlab="Days", ylab="No. individuals", main=paste(no_sims," iterations"))# lambda",lam_h,"and CI",lci,'-',hci))
 polygon(c(avg_sims[,9], rev(avg_sims[,9])),c(hci_sims[,1]+hci_sims[,5], rev(lci_sims[,1]+lci_sims[,5])),col=rgb(0,0,100,50,maxColorValue=255), border=NA)
 
 
