@@ -13,3 +13,9 @@ test5 ibmcraftr v1 seasonality exactdeath looped profiled.R
 6936.79    0.09 6938.29
 
 115 minutes 
+
+
+test5 ibmcraftr v1 seasonality exactdeath looped profiled.R on 29thNov2016
+   user  system elapsed 
+2593.50    0.83 2656.95
+43 minutes

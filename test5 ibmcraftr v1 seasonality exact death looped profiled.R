@@ -20,7 +20,7 @@ sims <- list()
 for(i in 1:no_sims){
 #humans
 #init
-init.pop <- c(S=1000, E=0, I_S=1, R_T=0, S_I=0, I_UA=0, I_DA=0, D = 1000)
+init.pop <- c(S=300, E=0, I_S=1, R_T=0, S_I=0, I_UA=0, I_DA=0, D = 300)
 pop <- syn_pop(init.pop)
 #parameters
 
@@ -241,7 +241,7 @@ library(deSolve)
 library(maemod)
 maxtime <- 10000
 
-out <- maemodrun("D:\\Dropbox\\IBM project_Sai\\ODE\\SIRSI.txt", timegrid = seq(0,maxtime,1)) #scenario2
+out <- maemodrun("D:\\Dropbox\\IBM project_Sai\\ODE\\SIRSI_debug.txt", timegrid = seq(0,maxtime,1)) #scenario2
 
 plot(avg_sims[,9],avg_sims[,1]+avg_sims[,5], type="l", col="blue", ylim=c(0,max(avg_sims[,1])), xlab="Days", ylab="No. individuals", main=paste(no_sims," iterations"))# lambda",lam_h,"and CI",lci,'-',hci))
 polygon(c(avg_sims[,9], rev(avg_sims[,9])),c(hci_sims[,1]+hci_sims[,5], rev(lci_sims[,1]+lci_sims[,5])),col=rgb(0,0,100,50,maxColorValue=255), border=NA)
