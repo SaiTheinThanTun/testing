@@ -1,26 +1,31 @@
-test3 ibmcraftr v1 seasonality looped profiled.R
+test3 ibmcraftr v1 seasonality looped profiled.R, 100 iterations
    user  system elapsed 
 3318.22    0.09 3320.02 
 
 [1] 55.3
 
-test4 ibmcraftr v1 seasonality death looped profiled.R
+test4 ibmcraftr v1 seasonality death looped profiled.R, 100 iterations
    user  system elapsed 
 3623.83    0.14 3635.72
 
-test5 ibmcraftr v1 seasonality exactdeath looped profiled.R
+test5 ibmcraftr v1 seasonality exactdeath looped profiled.R, 100 iterations
    user  system elapsed 
 6936.79    0.09 6938.29
 
 115 minutes 
 
 
-test5 ibmcraftr v1 seasonality exactdeath looped profiled.R on 29thNov2016
+test5 ibmcraftr v1 seasonality exactdeath looped profiled.R on 29thNov2016, 100 iterations
    user  system elapsed 
 2593.50    0.83 2656.95
 43 minutes
 
-test6 same params looped profiled.R on 30th Nov 2016
+test6 same params looped profiled.R on 30th Nov 2016, 100 iterations
 user  system elapsed 
 3551.22    0.88 3595.93
 60 minutes
+
+test6 same params looped profiled.R on 30th Nov 2016, 300 iterations
+user  system elapsed 
+8656.44    0.28 8668.70
+144 minutes

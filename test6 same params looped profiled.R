@@ -5,7 +5,7 @@ rm(list = ls())
 ####parameters####
 #parameters in the global environment
 system.time({
-  no_sims <- 100
+  no_sims <- 300
   lci <- .05
   hci <- .95
   sims <- list()
